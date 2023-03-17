@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-
+//test git
 contract Valuation {
     // Cấu trúc của 1 User
     struct User {
