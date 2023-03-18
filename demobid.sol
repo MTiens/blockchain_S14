@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-//test git
+
 contract Valuation {
     // Cấu trúc của 1 User
     struct User {
@@ -20,6 +20,7 @@ contract Valuation {
         uint evaluatorsCount;
         uint[] prices;
         address[] evaluators;
+        uint timeEnd;
     }
 
     mapping(address => User) public users;
@@ -51,15 +52,18 @@ contract Valuation {
         uint evaluatorsCount = 0;
         uint[] memory _prices;
         address[] memory _evaluators;
-        products[productHash] = Product(productHash, exists, haveFinalPrice, inValuation, finalPrice, name, evaluatorsCount,  _prices, _evaluators);
+        products[productHash] = Product(productHash, exists, haveFinalPrice, inValuation, finalPrice, name, evaluatorsCount,  _prices, _evaluators, 0);
     }
 
     // Chỉ quản trị viên mới có thể tạo phiên định giá.
-    function createValuation(bytes32 productHash) public {
+    function createValuation(bytes32 productHash, uint timeSet) public {
         require(msg.sender == administrator, "Only administrator can create Valuation");
         require(products[productHash].exists, "Product does not exist");
         require(!products[productHash].inValuation, "Product still in valuation");
         products[productHash].inValuation = true;
+        if(timeSet != 0) {
+            products[productHash].timeEnd = block.timestamp + timeSet;
+        }
     }
 
     /* Một người tham gia có thể định giá nhiều hơn một sản phẩm nếu phiên vẫn mở. 
@@ -68,6 +72,7 @@ contract Valuation {
         require(users[msg.sender].registered, "User not registered");
         require(products[productHash].exists, "Product does not exist");
         require(products[productHash].inValuation, "Product must in valuation");
+        require(block.timestamp < products[productHash].timeEnd || products[productHash].timeEnd == 0, "Valuation period has ended");
         bool check = false;
         for (uint j = 0; j < products[productHash].evaluatorsCount; j++){
             if(msg.sender == products[productHash].evaluators[j]){
