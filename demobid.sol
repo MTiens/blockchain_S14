@@ -149,16 +149,23 @@ contract Valuation {
     }
 
     // Hàm lấy sản phẩm đang định giá theo thứ tự
-    function getProdInValByID(uint id) public view returns (bytes32 _hash, string memory _name){
+    function getProdInValByID(uint id) public view returns (bytes32 _hash){
         require(numberOfProductInValuation > 0, "No product in valuation");
         uint temp = 0;
         for(uint j = 0; j < productCount; j++){
             if (products[productArray[j]].inValuation) {
                 if (temp == id) {
                     _hash = productArray[j];
-                    _name = products[productArray[j]].name;
+                    //_name = products[productArray[j]].name;
                 } else temp++;
             }
         }
+    }
+
+    function getValuator(uint productid, uint id) public view returns (string memory _name, uint _price) {
+        require(numberOfProductInValuation > 0, "No product in valuation");
+        require(products[getProdInValByID(productid)].evaluatorsCount > id, "No evaluation with that id");
+        _name = users[products[getProdInValByID(productid)].evaluators[id]].name;
+        _price = products[getProdInValByID(productid)].prices[id];
     }
 }
