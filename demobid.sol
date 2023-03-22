@@ -27,6 +27,9 @@ contract Valuation {
     mapping(bytes32 => Product) public products;
 
     address public administrator;
+    uint public productCount;
+    uint public numberOfProductInValuation;
+    mapping(uint => bytes32) public productArray;
 
     // Chỉ có một quản trị viên.
     constructor() {
@@ -53,6 +56,8 @@ contract Valuation {
         uint[] memory _prices;
         address[] memory _evaluators;
         products[productHash] = Product(productHash, exists, haveFinalPrice, inValuation, finalPrice, name, evaluatorsCount,  _prices, _evaluators, 0);
+        productArray[productCount] = productHash;
+        productCount ++;
     }
 
     // Chỉ quản trị viên mới có thể tạo phiên định giá.
@@ -61,6 +66,7 @@ contract Valuation {
         require(products[productHash].exists, "Product does not exist");
         require(!products[productHash].inValuation, "Product still in valuation");
         products[productHash].inValuation = true;
+        numberOfProductInValuation ++;
         if(timeSet != 0) {
             products[productHash].timeEnd = block.timestamp + timeSet;
         }
@@ -133,11 +139,26 @@ contract Valuation {
         // thêm yêu cầu tính giá cuối cùng trước khi đóng phiên
         require(products[productHash].finalPrice != 0, "Pls caculate finalPrice before close the valuation!");
         newUserDeviation(productHash);
-        products[productHash].inValuation = false; 
+        products[productHash].inValuation = false;
+        numberOfProductInValuation --;
     }
     
     // Hàm check admin. (Dư)
     function isAdministrator(address account) public view returns (bool) {
         return account == administrator;
+    }
+
+    // Hàm lấy sản phẩm đang định giá theo thứ tự
+    function getProdInValByID(uint id) public view returns (bytes32 _hash, string memory _name){
+        require(numberOfProductInValuation > 0, "No product in valuation");
+        uint temp = 0;
+        for(uint j = 0; j < productCount; j++){
+            if (products[productArray[j]].inValuation) {
+                if (temp == id) {
+                    _hash = productArray[j];
+                    _name = products[productArray[j]].name;
+                } else temp++;
+            }
+        }
     }
 }
