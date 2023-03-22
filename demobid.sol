@@ -162,10 +162,11 @@ contract Valuation {
         }
     }
 
-    function getValuator(uint productid, uint id) public view returns (string memory _name, uint _price) {
+    function getValuator(uint productid, uint id) public view returns (string memory _name, uint _price, address _address) {
         require(numberOfProductInValuation > 0, "No product in valuation");
         require(products[getProdInValByID(productid)].evaluatorsCount > id, "No evaluation with that id");
         _name = users[products[getProdInValByID(productid)].evaluators[id]].name;
         _price = products[getProdInValByID(productid)].prices[id];
+        _address = products[getProdInValByID(productid)].evaluators[id];
     }
 }
