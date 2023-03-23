@@ -12,6 +12,7 @@ contract Valuation {
     // Cấu trúc của 1 product
     struct Product {
         bytes32 productHash;
+        string ipfs;
         bool exists;
         bool haveFinalPrice;
         bool inValuation;
@@ -45,7 +46,7 @@ contract Valuation {
     }
 
     // Chỉ quản trị viên mới có thể tạo sản phẩm.
-    function createProduct(bytes32 productHash, string memory name) public {
+    function createProduct(bytes32 productHash, string memory name, string memory ipfs) public {
         require(msg.sender == administrator, "Only administrator can create product");
         require(!products[productHash].exists, "Product already exists");
         bool exists = true;
@@ -55,7 +56,7 @@ contract Valuation {
         uint evaluatorsCount = 0;
         uint[] memory _prices;
         address[] memory _evaluators;
-        products[productHash] = Product(productHash, exists, haveFinalPrice, inValuation, finalPrice, name, evaluatorsCount,  _prices, _evaluators, 0);
+        products[productHash] = Product(productHash, ipfs, exists, haveFinalPrice, inValuation, finalPrice, name, evaluatorsCount,  _prices, _evaluators, 0);
         productArray[productCount] = productHash;
         productCount ++;
     }
