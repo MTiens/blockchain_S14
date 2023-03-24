@@ -158,7 +158,8 @@ contract Valuation {
                 if (temp == id) {
                     _hash = productArray[j];
                     //_name = products[productArray[j]].name;
-                } else temp++;
+                } 
+                temp++;
             }
         }
     }
