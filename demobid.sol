@@ -85,8 +85,8 @@ contract Valuation {
             if(msg.sender == products[productHash].evaluators[j]){
                 products[productHash].prices[j] = price;
                 check = true;
+                break;
             }         
-            break;
         }
         if(!check) {
             products[productHash].evaluatorsCount ++;
