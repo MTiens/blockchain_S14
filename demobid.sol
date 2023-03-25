@@ -165,7 +165,7 @@ contract Valuation {
     }
 
     function getValuator(bytes32 productHash, uint id) public view returns (string memory _name, uint _price, address _address) {
-        require(numberOfProductInValuation > 0, "No product in valuation");
+        // require(numberOfProductInValuation > 0, "No product in valuation");
         require(products[productHash].evaluatorsCount > id, "No evaluation with that id");
         _name = users[products[productHash].evaluators[id]].name;
         _price = products[productHash].prices[id];
